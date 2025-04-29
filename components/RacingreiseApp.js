@@ -30,8 +30,8 @@ export default function RacingreiseApp() {
   const [notes, setNotes] = useState("");
   const [today, setToday] = useState("");
 
-  const [trainingCount, setTrainingCount] = useState(() => Number(localStorage.getItem("trainingCount")) || 0);
-  const [raceCount, setRaceCount] = useState(() => Number(localStorage.getItem("raceCount")) || 0);
+  const [trainingCount, setTrainingCount] = useState(0);
+  const [raceCount, setRaceCount] = useState(0);
   const [participants, setParticipants] = useState("");
   const [placement, setPlacement] = useState("");
   const [raceEvaluation, setRaceEvaluation] = useState("");
@@ -42,23 +42,33 @@ export default function RacingreiseApp() {
   const [weeklyFun, setWeeklyFun] = useState("");
   const [weeklyFocus, setWeeklyFocus] = useState("");
 
-  const [weeklyLogs, setWeeklyLogs] = useState(() => JSON.parse(localStorage.getItem("weeklyLogs")) || []);
+  const [weeklyLogs, setWeeklyLogs] = useState([]);
   const [showPreviousLogs, setShowPreviousLogs] = useState(false);
 
   const trainingGoal = 4;
 
   useEffect(() => {
-    const day = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    const day = new Date().toLocaleDateString("en-US", { weekday: "long" });
     setToday(day);
+
+    if (typeof window !== "undefined") {
+      setTrainingCount(Number(localStorage.getItem("trainingCount")) || 0);
+      setRaceCount(Number(localStorage.getItem("raceCount")) || 0);
+      setWeeklyLogs(JSON.parse(localStorage.getItem("weeklyLogs")) || []);
+    }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("trainingCount", trainingCount);
-    localStorage.setItem("raceCount", raceCount);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("trainingCount", trainingCount);
+      localStorage.setItem("raceCount", raceCount);
+    }
   }, [trainingCount, raceCount]);
 
   useEffect(() => {
-    localStorage.setItem("weeklyLogs", JSON.stringify(weeklyLogs));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("weeklyLogs", JSON.stringify(weeklyLogs));
+    }
   }, [weeklyLogs]);
 
   function getRandomMessage() {
@@ -67,7 +77,7 @@ export default function RacingreiseApp() {
   }
 
   function toggleTask(task) {
-    setCompletedTasks(prev => 
+    setCompletedTasks(prev =>
       prev.includes(task) ? prev.filter(t => t !== task) : [...prev, task]
     );
   }
